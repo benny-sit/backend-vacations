@@ -61,7 +61,6 @@ export async function adminOnly(req: Request, res: Response, next: NextFunction)
         return res.status(404).json({ error: 'User not found' });
     }
 
-    console.log(ans);
     if(!ans.userDetails.isAdmin) {
         return res.status(401).json({ error: "Only admin is allowed" });
     }

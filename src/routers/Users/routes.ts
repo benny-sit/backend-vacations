@@ -17,7 +17,6 @@ async function login(req: Request, res: Response, next: NextFunction) {
     if (username === undefined || password === undefined) {
         return res.status(400).json({ error: "Not provided username or password"})
     }
-    console.log("------------------- user login ----------------")
     let user;
     let match = false; 
 
