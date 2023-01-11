@@ -9,7 +9,9 @@ export class Vacation {
     @Column()
     destination : string
 
-    @Column()
+    @Column({
+        length: 1024,
+    })
     description : string
 
     @Column()
@@ -21,7 +23,7 @@ export class Vacation {
     @Column()
     price : number
 
-    @ManyToMany(() => UserDetails, (userdetails) => userdetails.vacations)
+    @ManyToMany(() => UserDetails, (userdetails) => userdetails.vacations, { onDelete: 'CASCADE'})
     subscribers : UserDetails[]
 
     @Column()

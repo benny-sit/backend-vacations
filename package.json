@@ -1,6 +1,6 @@
 {
    "name": "backend-vacations",
-   "version": "0.0.1",
+   "version": "1.0.1",
    "description": "Awesome project developed with TypeORM.",
    "type": "commonjs",
    "devDependencies": {
@@ -19,7 +19,7 @@
       "express": "^4.18.2",
       "express-fileupload": "^1.4.0",
       "jsonwebtoken": "^9.0.0",
-      "mysql": "^2.14.1",
+      "mysql2": "^2.3.3",
       "reflect-metadata": "^0.1.13",
       "typeorm": "0.3.10"
    },

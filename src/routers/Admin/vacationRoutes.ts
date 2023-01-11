@@ -2,6 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import { AppDataSource } from "../../data-source";
 import { Vacation } from "../../entity/Vacation";
 import { unlink } from 'node:fs/promises';
+import path from "node:path";
 
 const vacationRepo = AppDataSource.getRepository(Vacation);
 
@@ -12,11 +13,15 @@ async function createVacation(req: Request, res: Response, next: NextFunction) {
 
 
     const data = req.body;
-    const vacImg = req.files.image instanceof Array ? req.files.image[0] : req.files.image;
+    let vacImg = req.files.image instanceof Array ? req.files.image[0] : req.files.image;
+
+    if (!vacImg || !vacImg.name) {
+        return res.status(400).json({ error: "Invalid image"});
+    }
 
     let updatedName = `${Date.now().toString()}-${vacImg.name}`
 
-    let uploadPath =`${__dirname}/../../../public/vacation_images/${updatedName}`;
+    let uploadPath =path.join(__dirname, '../../../', process.env.PUBLIC_IMAGES, updatedName);
 
     vacImg.mv(uploadPath, function (err) {
         if (err)
@@ -55,12 +60,18 @@ async function updateVacation(req: Request, res: Response, next: NextFunction) {
         return res.status(400).json({ error: "Id needs to be a number." });
     }
 
+    if(!vacation) {
+        return res.status(404).json({ error: "Specified id not found." });
+    }
+
     if (req.files && Object.keys(req.files).length !== 0) {
         const vacImg = req.files.image instanceof Array ? req.files.image[0] : req.files.image;
 
+        // console.log(vacImg)
+
         let updatedName = `${Date.now().toString()}-${vacImg.name}`
 
-        let uploadPath =`${__dirname}/../../../public/vacation_images/${updatedName}`;
+        let uploadPath =path.join(__dirname, '../../../', process.env.PUBLIC_IMAGES, updatedName);
 
         vacImg.mv(uploadPath, function (err) {
             if (err)
@@ -71,14 +82,14 @@ async function updateVacation(req: Request, res: Response, next: NextFunction) {
 
         // delete image
 
-        toDelete = __dirname + '/../../../' +  vacation.imageUrl;
-
+        toDelete = path.join(__dirname, '../../../', vacation.imageUrl);
 
     }
-
+    
     try {
         await vacationRepo.save({...vacation, ...data});
         if(toDelete) {
+            // console.log(toDelete);
             await unlink(toDelete);
         }
     } catch (error) {
@@ -107,9 +118,14 @@ async function deleteVacation(req: Request, res: Response, next: NextFunction) {
         return res.status(400).json({ error: error.sqlMessage});
     }
 
+    if (!vacation) {
+        return res.status(404).json({ error: "Specified id not found." });
+    }
+
     // delete image
 
-    const toDelete = __dirname + '/../../../' +  vacation.imageUrl
+    const toDelete = path.join(__dirname, '../../../', vacation.imageUrl);
+
 
     let ans;
     try {
@@ -120,6 +136,24 @@ async function deleteVacation(req: Request, res: Response, next: NextFunction) {
     }
 
     return res.json(ans);
+}
+
+
+async function getVacationsCount(req: Request, res: Response, next: NextFunction) {
+
+
+    let ans;
+    try {
+        ans = await vacationRepo.createQueryBuilder('vacation')
+           .loadRelationCountAndMap('vacation.subscribersCount', 'vacation.subscribers')
+           .getMany();
+    } catch (error) {
+        res.status(500).json({ error: error});
+    }
+    console.log(ans);
+
+    return res.json({result: ans});
+
 }
 
 export const vacationAdminRoutes = [
@@ -137,5 +171,10 @@ export const vacationAdminRoutes = [
         method: 'put',
         path: '/:id',
         action: updateVacation
-    }
+    },
+    {
+        method: 'get',
+        path: '/count',
+        action: getVacationsCount
+    },
 ]

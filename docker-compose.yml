@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    image: mysql:8.0.31
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+      - MYSQL_DATABASE=$DB_DATABASE
+    expose:
+      - $DB_PORT
+    volumes:
+      - db:/var/lib/mysql
+  app:
+    depends_on:
+      - mysqldb
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    env_file: ./.env
+    environment:
+      - DB_HOST=mysqldb
+      # - DB_TYPE=mysql
+      # - DB_USERNAME=$DB_USERNAME
+      # - DB_PASSWORD=$DB_PASSWORD
+      # - DB_DATABASE=$DB_DATABASE
+      # - DB_PORT=$DB_PORT
+      # - ADMIN_PASSWORD=$ADMIN_PASSWORD
+      # - JWT_SECRET=$JWT_SECRET
+      # - JWT_SECRET_PREV=$JWT_SECRET_PREV
+      # - SALT_ROUNDS=$SALT_ROUNDS
+      # - SERVER_PORT=$SERVER_PORT
+      # - PUBLIC_IMAGES =$PUBLIC_IMAGES
+    ports:
+      - 3001:$SERVER_PORT
+    stdin_open: true
+    tty: true
+    
+
+volumes:
+  db:

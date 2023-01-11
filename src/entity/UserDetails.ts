@@ -49,7 +49,7 @@ export class UserDetails {
     @OneToOne(() => User, (user: User) => user.userDetails)
     user: User
 
-    @ManyToMany(() => Vacation, (vacation) => vacation.subscribers, { cascade: true })
+    @ManyToMany(() => Vacation, (vacation) => vacation.subscribers, { cascade: true, onDelete: 'CASCADE' })
     @JoinTable()
     vacations: Vacation[]
 

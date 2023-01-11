@@ -1,8 +1,16 @@
 const dotenv = require('dotenv')
 const fs = require('fs')
-const env = fs.readFileSync('.env')
-const buf = Buffer.from(env)
-const currentConfig = dotenv.parse(buf)
+
+
+let currentConfig;
+if(fs.existsSync('.env')) {
+  const env = fs.readFileSync('.env')
+  const buf = Buffer.from(env)
+  currentConfig = dotenv.parse(buf)
+} else {
+  currentConfig = {}
+  fs.writeFileSync('.env', '');
+}
 
 export function updateEnv(config = {}, eol = '\n'){
   const envContents = Object.entries({...currentConfig, ...config})

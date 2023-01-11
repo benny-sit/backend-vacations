@@ -41,10 +41,12 @@ export const refreshSecretKey = () => {
       process.env.JWT_SECRET = require("crypto")
         .randomBytes(256)
         .toString("base64");
-      updateEnv({
-        JWT_SECRET: process.env.JWT_SECRET,
-        JWT_SECRET_PREV: process.env.JWT_SECRET_PREV,
-      });
+      if (process.env.NODE_ENV !== "production") {
+        updateEnv({
+          JWT_SECRET: process.env.JWT_SECRET,
+          JWT_SECRET_PREV: process.env.JWT_SECRET_PREV,
+        });
+      }
       console.log(process.env.JWT_SECRET);
   }, jwt_expires * 1000);
 };
@@ -66,7 +68,6 @@ export function handleAuthorization(request: express.Request, response: express.
         return
     }
 
-    console.log(verified);
 
     request.body.user = verified.decoded;
 
