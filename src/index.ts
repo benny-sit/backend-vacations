@@ -50,7 +50,7 @@ AppDataSource.initialize().then(async () => {
 
 
 
-    app.listen(+process.env.SERVER_PORT || 3001, '0.0.0.0', () => {
+    app.listen(+process.env.PORT || 3001, '0.0.0.0', () => {
         console.log("listening on port " + process.env.SERVER_PORT || 3001);
     })
 
