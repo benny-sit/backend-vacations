@@ -34,7 +34,7 @@ services:
       # - SERVER_PORT=$SERVER_PORT
       # - PUBLIC_IMAGES =$PUBLIC_IMAGES
     ports:
-      - 127.0.0.1:3001:$SERVER_PORT
+      - 0.0.0.0:3001:$SERVER_PORT
       - 6092:6092
     stdin_open: true
     tty: true
