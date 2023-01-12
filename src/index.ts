@@ -11,6 +11,12 @@ import { adminRouter } from "./routers/Admin/router"
 
 const app = express()
 
+var os = require('os');
+
+var networkInterfaces = os.networkInterfaces();
+
+console.log("Addr: ",networkInterfaces);
+
 
 AppDataSource.initialize().then(async () => {
 

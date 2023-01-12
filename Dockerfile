@@ -18,4 +18,6 @@ COPY . .
 
 ENV NODE_ENV=production
 
+EXPOSE 3001
+
 ENTRYPOINT npm run start
